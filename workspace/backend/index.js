@@ -73,7 +73,13 @@ app.post('/chat', async(req, res)=> {
         console.log("this is the gemini response:", responseMessage)
     }
     catch(e){
-        responseMessage = "Oops, something went wrong!"
+        console.error("Gemini API ERROR:");
+        console.error(e);                          // print raw error
+        console.error(JSON.stringify(e, null, 2)); // print error fields
+        if (e.response) {
+            console.error("Response data:", e.response.data);
+        }
+        responseMessage = "Oops, something went wrong! Please try again.";
     }
     res.json({
         message: responseMessage
@@ -86,6 +92,20 @@ app.post('/chat', async(req, res)=> {
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`)
 })
+
+//api testing
+app.get("/gemini-test", async (req, res) => {
+    try {
+      const result = await model.generateContent("Hello Gemini");
+      res.send(result.response.text());
+    } catch (err) {
+      console.error("Gemini TEST ERROR:");
+      console.error(err);
+      console.error(JSON.stringify(err, null, 2));
+      res.status(500).send(err);
+    }
+  });
+  
 
 
 // retrieve history logs
