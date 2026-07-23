@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types -- project does not use PropTypes elsewhere */
 import { MapContainer, TileLayer, Marker, Popup,useMapEvents,  } from 'react-leaflet'
 import {useState, } from "react";
 import './leaflet.css'
@@ -30,9 +29,10 @@ Finally, this information is displayed in a popup on the map
 
 */}
 
-
+//Heroku link
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+//loading icon
 const Spinner = () => <div className="spinner"></div>;
 
 //function to create a popup wherever the user clicks on the map
@@ -111,11 +111,7 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
                                     console.error("Error while posting to /add route:", err);
                                 });
 
-
-
-
-
-
+                                //
                             })
                             .catch(err => {
                                 console.error("Gemini error:", err)
@@ -123,7 +119,6 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
                                 setIsLoading(false);
 
                             })
-
 
                     })
                     .catch(err => {
@@ -134,12 +129,8 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
 
 
 
-
             //click { close
             }
-
-
-
 
          //mapevent ({ close
         })
@@ -175,10 +166,10 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
 
 
 export default function Leaflet() {
-    const [position, setPosition] = useState(null)                  //latlang coords of marker
-    const [sunInfo, setSunInfo] = useState(["", ""])        //sunrise/sunset times
+    const [position, setPosition] = useState(null)            //latlang coords of marker
+    const [sunInfo, setSunInfo] = useState(["", ""])          //sunrise/sunset times
     const [geminiOutput, setGeminiOutput] = useState("");     // other location given by gemini
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);        // loading indicator
 
     return (
             <div id='leafletContainer'>
