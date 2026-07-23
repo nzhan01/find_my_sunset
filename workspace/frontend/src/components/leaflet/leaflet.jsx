@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types -- project does not use PropTypes elsewhere */
 import { MapContainer, TileLayer, Marker, Popup,useMapEvents,  } from 'react-leaflet'
 import {useState, } from "react";
 import './leaflet.css'
@@ -30,15 +31,13 @@ Finally, this information is displayed in a popup on the map
 */}
 
 
-export default function Leaflet() {
-    const [position, setPosition] = useState(null)                  //latlang coords of marker
-    const [sunInfo, setSunInfo] = useState(["", ""])        //sunrise/sunset times
-    const [geminiOutput, setGeminiOutput] = useState("");     // other location given by gemini
-
-
+const Spinner = () => <div className="spinner"></div>;
 
 //function to create a popup wherever the user clicks on the map
-    function  LocationMarker() {
+//defined outside Leaflet so its identity is stable across parent re-renders;
+//otherwise every setState in the click handler redefines this component,
+//causing React to remount the Marker/Popup and lose the open popup state
+function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutput, setGeminiOutput, isLoading, setIsLoading }) {
 
 
     // click event
@@ -49,7 +48,7 @@ export default function Leaflet() {
                 const lng = e.latlng.lng
                 setPosition(e.latlng)
                 map.flyTo(e.latlng, map.getZoom())
-
+                setIsLoading(true);
 
                 // post request to get sunrise times
                 fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/sunrise-sunset', {
@@ -84,7 +83,7 @@ export default function Leaflet() {
                             .then(data => {
                                 setGeminiOutput(data.message)
                                 console.log("setting sunInfo useState to ",data.message)
-
+                                setIsLoading(false);
 
                                 // add log to backend db
                                 fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/add', {
@@ -119,6 +118,7 @@ export default function Leaflet() {
                             .catch(err => {
                                 console.error("Gemini error:", err)
                                 setGeminiOutput("error getting gemini results")
+                                setIsLoading(false);
 
                             })
 
@@ -127,6 +127,7 @@ export default function Leaflet() {
                     .catch(err => {
                         console.error("API error:", err)
                         setSunInfo(["Error fetching sun times","Error fetching sun times"])
+                        setIsLoading(false);
                     })
 
 
@@ -147,26 +148,34 @@ export default function Leaflet() {
 
             <Marker position={position}>
                 <Popup>
-                    <strong>You are here at position:</strong>
-                    <br />
-                    Latitude: {position.lat.toFixed(4)}
-                    <br/>
-                    Longitude: {position.lng.toFixed(4)}
-                    <br/>
-                    Sunrise: {new Date(sunInfo[0]).toLocaleTimeString()} local time
-                    <br/>
-                    Sunset: {new Date(sunInfo[1]).toLocaleTimeString()} local time
-                    <br/>
-                     <p style = {{whiteSpace: 'pre-wrap'}}><strong>Similar Sunset Location:</strong><br/>{geminiOutput}</p>
-
+                    {isLoading ? (
+                        <Spinner />
+                    ) : (
+                        <>
+                            <strong>You are here at position:</strong>
+                            <br />
+                            Latitude: {position.lat.toFixed(4)}
+                            <br/>
+                            Longitude: {position.lng.toFixed(4)}
+                            <br/>
+                            Sunrise: {new Date(sunInfo[0]).toLocaleTimeString()} local time
+                            <br/>
+                            Sunset: {new Date(sunInfo[1]).toLocaleTimeString()} local time
+                            <br/>
+                            <p style = {{whiteSpace: 'pre-wrap'}}><strong>Similar Sunset Location:</strong><br/>{geminiOutput}</p>
+                        </>
+                    )}
                 </Popup>
             </Marker>
         )
     }
 
 
-
-
+export default function Leaflet() {
+    const [position, setPosition] = useState(null)                  //latlang coords of marker
+    const [sunInfo, setSunInfo] = useState(["", ""])        //sunrise/sunset times
+    const [geminiOutput, setGeminiOutput] = useState("");     // other location given by gemini
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
             <div id='leafletContainer'>
@@ -191,7 +200,16 @@ export default function Leaflet() {
                             This is where I&#39;m from!
                         </Popup>
                     </Marker>
-                    <LocationMarker></LocationMarker>
+                    <LocationMarker
+                        position={position}
+                        setPosition={setPosition}
+                        sunInfo={sunInfo}
+                        setSunInfo={setSunInfo}
+                        geminiOutput={geminiOutput}
+                        setGeminiOutput={setGeminiOutput}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
+                    />
                 </MapContainer>
             </div>
             </div>
