@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import  "./history.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 {/*
 This is the component that displays the history of where the user has clicked on the map
@@ -25,7 +27,7 @@ export default function History () {
     useEffect(() => {
 
         //fetch each log from database via backend
-        fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/logs')
+        fetch(`${API_BASE_URL}/logs`)
             .then(res => res.json())
             .then(data => {
                 let newMessages = []
@@ -43,7 +45,7 @@ export default function History () {
     function deleteHistory(){
         let newMessages = []
 
-        fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/delete', {
+        fetch(`${API_BASE_URL}/delete`, {
             method: 'POST',
 
         })

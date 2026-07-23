@@ -4,18 +4,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 20px;
 
 }
 
 .logbox {
     position: relative;
     width: 65%;
-    color: mintcream;
-    background-color: #8ecae6 ;
+    max-width: 700px;
+    color: #3d2b1f;
+    background-color: #FFF8E7;
+    border-top: 4px solid #F77F00;
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    font-size: 20px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-family: "Crimson Text", serif;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.logbox:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.logbox h1 {
+    color: #D62828;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.logbox p {
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+.logbox p strong {
+    color: #219ebc;
 }
 
 .x {

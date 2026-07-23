@@ -31,6 +31,8 @@ Finally, this information is displayed in a popup on the map
 */}
 
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Spinner = () => <div className="spinner"></div>;
 
 //function to create a popup wherever the user clicks on the map
@@ -51,7 +53,7 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
                 setIsLoading(true);
 
                 // post request to get sunrise times
-                fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/sunrise-sunset', {
+                fetch(`${API_BASE_URL}/sunrise-sunset`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -72,7 +74,7 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
 
 
 
-                        fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/chat', {
+                        fetch(`${API_BASE_URL}/chat`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -86,7 +88,7 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
                                 setIsLoading(false);
 
                                 // add log to backend db
-                                fetch('https://morning-fjord-49398-bd72dac11171.herokuapp.com/add', {
+                                fetch(`${API_BASE_URL}/add`, {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'
@@ -152,17 +154,18 @@ function LocationMarker({ position, setPosition, sunInfo, setSunInfo, geminiOutp
                         <Spinner />
                     ) : (
                         <>
-                            <strong>You are here at position:</strong>
-                            <br />
-                            Latitude: {position.lat.toFixed(4)}
-                            <br/>
-                            Longitude: {position.lng.toFixed(4)}
-                            <br/>
-                            Sunrise: {new Date(sunInfo[0]).toLocaleTimeString()} local time
-                            <br/>
-                            Sunset: {new Date(sunInfo[1]).toLocaleTimeString()} local time
-                            <br/>
-                            <p style = {{whiteSpace: 'pre-wrap'}}><strong>Similar Sunset Location:</strong><br/>{geminiOutput}</p>
+                            <div className="popup-header">
+                                <strong>You are here at position:</strong>
+                                <div className="popup-coords">
+                                    Latitude: {position.lat.toFixed(4)}<br/>
+                                    Longitude: {position.lng.toFixed(4)}
+                                </div>
+                            </div>
+                            <div className="popup-suntimes">
+                                <span>🌅 Sunrise: {new Date(sunInfo[0]).toLocaleTimeString()}</span>
+                                <span>🌇 Sunset: {new Date(sunInfo[1]).toLocaleTimeString()}</span>
+                            </div>
+                            <p className="gemini-box"><strong>Similar Sunset Location:</strong><br/>{geminiOutput}</p>
                         </>
                     )}
                 </Popup>
